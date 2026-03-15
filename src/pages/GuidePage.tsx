@@ -114,7 +114,7 @@ const GuidePage = () => {
                 <tr>
                   <td className="py-2 pr-4 text-primary font-semibold">T</td>
                   <td className="py-2 pr-4">{t("simPeriods")}</td>
-                  <td className="py-2 pr-4">20 – 300</td>
+                  <td className="py-2 pr-4">20 – 150</td>
                   <td className="py-2 font-sans">{t("guideDescT")}</td>
                 </tr>
               </tbody>

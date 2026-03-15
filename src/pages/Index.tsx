@@ -137,6 +137,8 @@ const Index = () => {
     () => new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }),
     [],
   );
+  const toMillions = useCallback((value: number) => value / 1_000_000, []);
+  const fromMillions = useCallback((value: number) => value * 1_000_000, []);
 
   // Force re-render on locale change by using locale in key places
   void locale;
@@ -200,40 +202,40 @@ const Index = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs text-muted-foreground">Capital K₀ (cn, mil. 2021 US$)</label>
+                  <label className="text-xs text-muted-foreground">Capital K₀ (mil)</label>
                   <Input
                     type="number"
                     min={0}
-                    step={1000000000}
-                    value={Number.isFinite(KLevel0) ? KLevel0 : 0}
-                    onChange={(e) => setKLevel0(Number(e.target.value))}
+                    step={1000}
+                    value={Number.isFinite(KLevel0) ? Number(toMillions(KLevel0).toFixed(2)) : 0}
+                    onChange={(e) => setKLevel0(fromMillions(Number(e.target.value)))}
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs text-muted-foreground">Labor L₀ (emp)</label>
+                  <label className="text-xs text-muted-foreground">Labor L₀ (mil)</label>
                   <Input
                     type="number"
                     min={0}
-                    step={100000}
-                    value={Number.isFinite(Lprod0) ? Lprod0 : 0}
-                    onChange={(e) => setLprod0(Number(e.target.value))}
+                    step={0.1}
+                    value={Number.isFinite(Lprod0) ? Number(toMillions(Lprod0).toFixed(2)) : 0}
+                    onChange={(e) => setLprod0(fromMillions(Number(e.target.value)))}
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs text-muted-foreground">Population L₀ (pop)</label>
+                  <label className="text-xs text-muted-foreground">Population P₀ (mil)</label>
                   <Input
                     type="number"
                     min={0}
-                    step={100000}
-                    value={Number.isFinite(Lpop0) ? Lpop0 : 0}
-                    onChange={(e) => setLpop0(Number(e.target.value))}
+                    step={0.1}
+                    value={Number.isFinite(Lpop0) ? Number(toMillions(Lpop0).toFixed(2)) : 0}
+                    onChange={(e) => setLpop0(fromMillions(Number(e.target.value)))}
                   />
                 </div>
               </div>
               <div className="text-xs text-muted-foreground space-y-1">
-                <div>Implied Y₀: <span className="text-foreground">{levelT0 ? formatCurrencyCompact.format(levelT0.Y) : "-"}</span></div>
-                <div>Implied GDP per worker: <span className="text-foreground">{levelT0 ? formatCurrency.format(levelT0.yPerWorker) : "-"}</span></div>
-                <div>Implied GDP per capita: <span className="text-foreground">{levelT0 ? formatCurrency.format(levelT0.yPerCapita) : "-"}</span></div>
+                <div>Implied Y₀ (mil. 2021 US$): <span className="text-foreground">{levelT0 ? formatNumber.format(toMillions(levelT0.Y)) : "-"}</span></div>
+                <div>Implied GDP per worker (US$): <span className="text-foreground">{levelT0 ? formatCurrency.format(levelT0.yPerWorker) : "-"}</span></div>
+                <div>Implied GDP per capita (US$): <span className="text-foreground">{levelT0 ? formatCurrency.format(levelT0.yPerCapita) : "-"}</span></div>
               </div>
             </div>
 
