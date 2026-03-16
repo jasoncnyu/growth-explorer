@@ -10,23 +10,27 @@ interface NavHeaderProps {
 
 const NavHeader = ({ locale, onLocaleChange }: NavHeaderProps) => {
   const location = useLocation();
+  const basePath = `/${locale}`;
 
   const links = [
-    { to: "/", label: t("navSimulator") },
-    { to: "/theory", label: t("navTheory") },
-    { to: "/guide", label: t("navGuide") },
+    { to: `${basePath}/`, label: t("navSimulator") },
+    { to: `${basePath}/theory`, label: t("navTheory") },
+    { to: `${basePath}/guide`, label: t("navGuide") },
   ];
+
+  const normalize = (p: string) => (p.length > 1 && p.endsWith("/") ? p.slice(0, -1) : p);
+  const currentPath = normalize(location.pathname);
 
   return (
     <header className="border-b border-border bg-card">
       <div className="container mx-auto px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-8">
-          <Link to="/" className="text-lg font-bold text-foreground tracking-tight hover:text-primary transition-colors">
+          <Link to={`${basePath}/`} className="text-lg font-bold text-foreground tracking-tight hover:text-primary transition-colors">
             {t("title")}
           </Link>
           <nav className="flex items-center gap-1">
             {links.map((link) => {
-              const isActive = location.pathname === link.to;
+              const isActive = currentPath === normalize(link.to);
               return (
                 <Link
                   key={link.to}

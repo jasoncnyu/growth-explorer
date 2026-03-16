@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import NavHeader from "@/components/NavHeader";
-import { t, getLocale, setLocale, type Locale } from "@/lib/i18n";
-import { useState, useCallback } from "react";
+import { t, getLocale, setLocale, type Locale, SUPPORTED_LOCALES } from "@/lib/i18n";
+import { useState, useCallback, useEffect, useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Step = ({ number, title, children }: { number: number; title: string; children: React.ReactNode }) => (
   <motion.div
@@ -33,8 +34,21 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
 
 const GuidePage = () => {
   const [locale, setLocaleState] = useState<Locale>(getLocale());
-  const changeLocale = useCallback((l: Locale) => { setLocale(l); setLocaleState(l); }, []);
-  void locale;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const localePattern = useMemo(
+    () => new RegExp(`^/(${SUPPORTED_LOCALES.map((l) => l.code).join("|")})(?=/|$)`),
+    [],
+  );
+  const changeLocale = useCallback((l: Locale) => {
+    setLocale(l);
+    setLocaleState(l);
+    const nextPath = location.pathname.replace(localePattern, `/${l}`);
+    navigate(`${nextPath}${location.search}`, { replace: true });
+  }, [location.pathname, location.search, localePattern, navigate]);
+  useEffect(() => {
+    setLocaleState(getLocale());
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-background">

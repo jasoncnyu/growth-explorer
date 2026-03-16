@@ -355,6 +355,10 @@ function detectLocale(): Locale {
   return "en";
 }
 
+export function getDefaultLocale(): Locale {
+  return detectLocale();
+}
+
 let currentLocale: Locale | null = null;
 
 export function getLocale(): Locale {

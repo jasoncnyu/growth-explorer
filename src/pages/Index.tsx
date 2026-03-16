@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -11,7 +12,7 @@ import SolowCharts from "@/components/SolowCharts";
 import SteadyStatePanel from "@/components/SteadyStatePanel";
 import NavHeader from "@/components/NavHeader";
 import { simulate, simulateLevels, computeSteadyState, goldenRuleSavingsRate, type SolowParams } from "@/lib/solow";
-import { t, getLocale, setLocale, isRTL, type Locale } from "@/lib/i18n";
+import { t, getLocale, setLocale, isRTL, type Locale, SUPPORTED_LOCALES } from "@/lib/i18n";
 
 type PwtYearRow = {
   y: number;
@@ -39,7 +40,18 @@ type PwtDataset = {
 
 const Index = () => {
   const [locale, setLocaleState] = useState<Locale>(getLocale());
-  const changeLocale = useCallback((l: Locale) => { setLocale(l); setLocaleState(l); }, []);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const localePattern = useMemo(
+    () => new RegExp(`^/(${SUPPORTED_LOCALES.map((l) => l.code).join("|")})(?=/|$)`),
+    [],
+  );
+  const changeLocale = useCallback((l: Locale) => {
+    setLocale(l);
+    setLocaleState(l);
+    const nextPath = location.pathname.replace(localePattern, `/${l}`);
+    navigate(`${nextPath}${location.search}`, { replace: true });
+  }, [location.pathname, location.search, localePattern, navigate]);
 
   const [pwtData, setPwtData] = useState<PwtDataset | null>(null);
   const [pwtCountries, setPwtCountries] = useState<PwtCountry[]>([]);
@@ -140,8 +152,9 @@ const Index = () => {
   const toMillions = useCallback((value: number) => value / 1_000_000, []);
   const fromMillions = useCallback((value: number) => value * 1_000_000, []);
 
-  // Force re-render on locale change by using locale in key places
-  void locale;
+  useEffect(() => {
+    setLocaleState(getLocale());
+  }, [location.pathname]);
 
   const dir = isRTL() ? "rtl" : "ltr";
 
