@@ -3,6 +3,7 @@ import NavHeader from "@/components/NavHeader";
 import { t, getLocale, setLocale, type Locale, SUPPORTED_LOCALES } from "@/lib/i18n";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { BlockMath } from "react-katex";
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <motion.section
@@ -63,33 +64,33 @@ const TheoryPage = () => {
 
         <Section title={t("theoryEquationsTitle")}>
           <p>{t("theoryEq1")}</p>
-          <div className="bg-muted rounded-lg p-4 font-mono text-sm space-y-2">
-            <p>Y = F(K, AL) = K<sup>α</sup>(AL)<sup>1−α</sup></p>
-            <p>y = Y/(AL), k = K/(AL)</p>
-            <p>y = k<sup>α</sup></p>
+          <div className="bg-muted rounded-lg p-4 text-sm space-y-2">
+            <BlockMath math={`Y = F(K, AL) = K^{\alpha}(AL)^{1-\alpha}`} />
+            <BlockMath math={`y = \frac{Y}{AL},\quad k = \frac{K}{AL}`} />
+            <BlockMath math={`y = k^{\alpha}`} />
           </div>
           <p>{t("theoryEq2")}</p>
-          <div className="bg-muted rounded-lg p-4 font-mono text-sm space-y-2">
-            <p>Δk = sf(k) − (n + g + δ)k</p>
-            <p>Δk = sk<sup>α</sup> − (n + g + δ)k</p>
+          <div className="bg-muted rounded-lg p-4 text-sm space-y-2">
+            <BlockMath math={`\dot{k} = s f(k) - (n + g + \delta)k`} />
+            <BlockMath math={`\dot{k} = s k^{\alpha} - (n + g + \delta)k`} />
           </div>
           <p>{t("theoryEq3")}</p>
         </Section>
 
         <Section title={t("theorySteadyTitle")}>
           <p>{t("theorySteady1")}</p>
-          <div className="bg-muted rounded-lg p-4 font-mono text-sm">
-            <p>k* = (s / (n + g + δ))<sup>1/(1−α)</sup></p>
-            <p>y* = (k*)<sup>α</sup></p>
+          <div className="bg-muted rounded-lg p-4 text-sm space-y-2">
+            <BlockMath math={`k^* = \left(\frac{s}{n + g + \delta}\right)^{\frac{1}{1-\alpha}}`} />
+            <BlockMath math={`y^* = (k^*)^{\alpha}`} />
           </div>
           <p>{t("theorySteady2")}</p>
         </Section>
 
         <Section title={t("theoryGoldenTitle")}>
           <p>{t("theoryGolden1")}</p>
-          <div className="bg-muted rounded-lg p-4 font-mono text-sm">
-            <p>s<sub>gold</sub> = α</p>
-            <p>c* = (1 − α) · (α / (n + g + δ))<sup>α/(1−α)</sup></p>
+          <div className="bg-muted rounded-lg p-4 text-sm space-y-2">
+            <BlockMath math={`s_{gold} = \alpha`} />
+            <BlockMath math={`c^* = (1-\alpha)\left(\frac{\alpha}{n + g + \delta}\right)^{\frac{\alpha}{1-\alpha}}`} />
           </div>
           <p>{t("theoryGolden2")}</p>
         </Section>

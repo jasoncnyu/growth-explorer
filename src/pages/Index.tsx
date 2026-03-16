@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
+import { BlockMath } from "react-katex";
 import ParameterSlider from "@/components/ParameterSlider";
 import SolowCharts from "@/components/SolowCharts";
 import SteadyStatePanel from "@/components/SteadyStatePanel";
@@ -181,9 +182,9 @@ const Index = () => {
             </div>
 
             <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-              <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Level Inputs (A, K, L)</h3>
+              <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">{t("levelInputsTitle")}</h3>
               <div className="space-y-2">
-                <label className="text-xs text-muted-foreground">Country (PWT 11.0)</label>
+                <label className="text-xs text-muted-foreground">{t("levelInputsCountry")}</label>
                 <Select
                   value={selectedCountry}
                   onValueChange={(value) => setSelectedCountry(value)}
@@ -200,12 +201,14 @@ const Index = () => {
                   </SelectContent>
                 </Select>
                 <div className="text-xs text-muted-foreground">
-                  {pwtError ? `PWT load error: ${pwtError}` : `Auto-calibrated from latest year: ${selectedYear ?? "—"}`}
+                  {pwtError
+                    ? `${t("pwtLoadError")}: ${pwtError}`
+                    : `${t("pwtAutoCalibrated")}: ${selectedYear ?? "—"}`}
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <label className="text-xs text-muted-foreground">Technology A₀</label>
+                  <label className="text-xs text-muted-foreground">{t("levelInputsA0")}</label>
                   <Input
                     type="number"
                     min={0}
@@ -215,7 +218,7 @@ const Index = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs text-muted-foreground">Capital K₀ (mil)</label>
+                  <label className="text-xs text-muted-foreground">{t("levelInputsK0")}</label>
                   <Input
                     type="number"
                     min={0}
@@ -225,7 +228,7 @@ const Index = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs text-muted-foreground">Labor L₀ (mil)</label>
+                  <label className="text-xs text-muted-foreground">{t("levelInputsL0")}</label>
                   <Input
                     type="number"
                     min={0}
@@ -235,7 +238,7 @@ const Index = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs text-muted-foreground">Population P₀ (mil)</label>
+                  <label className="text-xs text-muted-foreground">{t("levelInputsP0")}</label>
                   <Input
                     type="number"
                     min={0}
@@ -246,19 +249,19 @@ const Index = () => {
                 </div>
               </div>
               <div className="text-xs text-muted-foreground space-y-1">
-                <div>Implied Y₀ (mil. 2021 US$): <span className="text-foreground">{levelT0 ? formatNumber.format(toMillions(levelT0.Y)) : "-"}</span></div>
-                <div>Implied GDP per worker (US$): <span className="text-foreground">{levelT0 ? formatCurrency.format(levelT0.yPerWorker) : "-"}</span></div>
-                <div>Implied GDP per capita (US$): <span className="text-foreground">{levelT0 ? formatCurrency.format(levelT0.yPerCapita) : "-"}</span></div>
+                <div>{t("levelInputsImpliedY0")}: <span className="text-foreground">{levelT0 ? formatNumber.format(toMillions(levelT0.Y)) : "-"}</span></div>
+                <div>{t("levelInputsImpliedWorker")}: <span className="text-foreground">{levelT0 ? formatCurrency.format(levelT0.yPerWorker) : "-"}</span></div>
+                <div>{t("levelInputsImpliedCapita")}: <span className="text-foreground">{levelT0 ? formatCurrency.format(levelT0.yPerCapita) : "-"}</span></div>
               </div>
             </div>
 
             <div className="rounded-xl border border-border bg-card p-5 space-y-2">
               <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">{t("formulas")}</h3>
-              <div className="space-y-1.5 font-mono text-xs text-muted-foreground leading-relaxed">
-                <p>Δk = sf(k) − (n+g+δ)k</p>
-                <p>f(k) = k<sup>α</sup></p>
-                <p>k* = (s/(n+g+δ))<sup>1/(1−α)</sup></p>
-                <p>s<sub>gold</sub> = α</p>
+              <div className="space-y-2 text-xs text-muted-foreground">
+                <BlockMath math={`\dot{k} = s f(k) - (n + g + \delta)k`} />
+                <BlockMath math={`f(k) = k^{\alpha}`} />
+                <BlockMath math={`k^* = \left(\frac{s}{n+g+\delta}\right)^{\frac{1}{1-\alpha}}`} />
+                <BlockMath math={`s_{gold} = \alpha`} />
               </div>
             </div>
           </motion.aside>
@@ -303,7 +306,7 @@ const Index = () => {
             </div>
 
             <div className="mt-6 rounded-xl border border-border bg-card p-6">
-              <h3 className="mb-4 text-sm font-semibold text-foreground uppercase tracking-wider">Real GDP Simulation (Levels)</h3>
+              <h3 className="mb-4 text-sm font-semibold text-foreground uppercase tracking-wider">{t("realGdpTitle")}</h3>
               <div className="h-[420px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={levelData} margin={{ top: 10, right: 20, left: 5, bottom: 30 }}>
@@ -334,14 +337,14 @@ const Index = () => {
                       contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "var(--radius)" }}
                       formatter={(value, name) => {
                         const v = Number(value);
-                        if (name === "Total GDP") return [formatCurrencyCompact.format(v), name];
-                        if (name === "GDP per capita") return [formatCurrency.format(v), name];
+                        if (name === t("realGdpTotal")) return [formatCurrencyCompact.format(v), name];
+                        if (name === t("realGdpPerCapita")) return [formatCurrency.format(v), name];
                         return [formatNumber.format(v), name];
                       }}
                     />
                     <Legend verticalAlign="top" align="center" wrapperStyle={{ fontSize: 11, paddingBottom: 12, lineHeight: "22px" }} iconSize={10} />
-                    <Line yAxisId="left" type="monotone" dataKey="Y" name="Total GDP" stroke="hsl(var(--chart-output))" strokeWidth={2.5} dot={false} />
-                    <Line yAxisId="right" type="monotone" dataKey="yPerCapita" name="GDP per capita" stroke="hsl(var(--chart-capital))" strokeWidth={2.5} dot={false} />
+                    <Line yAxisId="left" type="monotone" dataKey="Y" name={t("realGdpTotal")} stroke="hsl(var(--chart-output))" strokeWidth={2.5} dot={false} />
+                    <Line yAxisId="right" type="monotone" dataKey="yPerCapita" name={t("realGdpPerCapita")} stroke="hsl(var(--chart-capital))" strokeWidth={2.5} dot={false} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -349,9 +352,9 @@ const Index = () => {
                 {[levelData[0], levelData[levelData.length - 1]].map(row => (
                   <div key={row?.t ?? "t"} className="rounded-lg border border-border p-4 space-y-2">
                     <div className="text-xs uppercase tracking-wider text-muted-foreground">t = {row?.t ?? 0}</div>
-                    <div className="text-foreground">Total GDP: <span className="text-primary">{row ? formatCurrencyCompact.format(row.Y) : "-"}</span></div>
-                    <div className="text-foreground">GDP per capita: <span className="text-primary">{row ? formatCurrency.format(row.yPerCapita) : "-"}</span></div>
-                    <div className="text-muted-foreground text-xs">Population: {row ? formatNumberCompact.format(row.Lpop) : "-"}</div>
+                    <div className="text-foreground">{t("realGdpTotal")}: <span className="text-primary">{row ? formatCurrencyCompact.format(row.Y) : "-"}</span></div>
+                    <div className="text-foreground">{t("realGdpPerCapita")}: <span className="text-primary">{row ? formatCurrency.format(row.yPerCapita) : "-"}</span></div>
+                    <div className="text-muted-foreground text-xs">{t("realGdpPopulation")}: {row ? formatNumberCompact.format(row.Lpop) : "-"}</div>
                   </div>
                 ))}
               </div>
