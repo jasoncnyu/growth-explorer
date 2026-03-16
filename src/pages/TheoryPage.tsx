@@ -65,14 +65,14 @@ const TheoryPage = () => {
         <Section title={t("theoryEquationsTitle")}>
           <p>{t("theoryEq1")}</p>
           <div className="bg-muted rounded-lg p-4 text-sm space-y-2">
-            <BlockMath math={`Y = F(K, AL) = K^{\alpha}(AL)^{1-\alpha}`} />
-            <BlockMath math={`y = \frac{Y}{AL},\quad k = \frac{K}{AL}`} />
-            <BlockMath math={`y = k^{\alpha}`} />
+            <BlockMath math={String.raw`Y = F(K, AL) = K^{\alpha}(AL)^{1-\alpha}`} />
+            <BlockMath math={String.raw`y = \frac{Y}{AL},\quad k = \frac{K}{AL}`} />
+            <BlockMath math={String.raw`y = k^{\alpha}`} />
           </div>
           <p>{t("theoryEq2")}</p>
           <div className="bg-muted rounded-lg p-4 text-sm space-y-2">
-            <BlockMath math={`\dot{k} = s f(k) - (n + g + \delta)k`} />
-            <BlockMath math={`\dot{k} = s k^{\alpha} - (n + g + \delta)k`} />
+            <BlockMath math={String.raw`\dot{k} = s f(k) - (n + g + \delta)k`} />
+            <BlockMath math={String.raw`\dot{k} = s k^{\alpha} - (n + g + \delta)k`} />
           </div>
           <p>{t("theoryEq3")}</p>
         </Section>
@@ -80,8 +80,8 @@ const TheoryPage = () => {
         <Section title={t("theorySteadyTitle")}>
           <p>{t("theorySteady1")}</p>
           <div className="bg-muted rounded-lg p-4 text-sm space-y-2">
-            <BlockMath math={`k^* = \left(\frac{s}{n + g + \delta}\right)^{\frac{1}{1-\alpha}}`} />
-            <BlockMath math={`y^* = (k^*)^{\alpha}`} />
+            <BlockMath math={String.raw`k^* = \left(\frac{s}{n + g + \delta}\right)^{\frac{1}{1-\alpha}}`} />
+            <BlockMath math={String.raw`y^* = (k^*)^{\alpha}`} />
           </div>
           <p>{t("theorySteady2")}</p>
         </Section>
@@ -89,8 +89,8 @@ const TheoryPage = () => {
         <Section title={t("theoryGoldenTitle")}>
           <p>{t("theoryGolden1")}</p>
           <div className="bg-muted rounded-lg p-4 text-sm space-y-2">
-            <BlockMath math={`s_{gold} = \alpha`} />
-            <BlockMath math={`c^* = (1-\alpha)\left(\frac{\alpha}{n + g + \delta}\right)^{\frac{\alpha}{1-\alpha}}`} />
+            <BlockMath math={String.raw`s_{gold} = \alpha`} />
+            <BlockMath math={String.raw`c^* = (1-\alpha)\left(\frac{\alpha}{n + g + \delta}\right)^{\frac{\alpha}{1-\alpha}}`} />
           </div>
           <p>{t("theoryGolden2")}</p>
         </Section>

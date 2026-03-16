@@ -4,10 +4,12 @@ import { motion } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
 import { BlockMath } from "react-katex";
+import { ChevronDown } from "lucide-react";
 import ParameterSlider from "@/components/ParameterSlider";
 import SolowCharts from "@/components/SolowCharts";
 import SteadyStatePanel from "@/components/SteadyStatePanel";
@@ -67,12 +69,15 @@ const Index = () => {
 
   const [s, setS] = useState(0.3);
   const [alpha, setAlpha] = useState(0.33);
+  const [alphaAuto, setAlphaAuto] = useState(true);
   const [delta, setDelta] = useState(0.05);
   const [n, setN] = useState(0.02);
   const [g, setG] = useState(0.02);
   const [k0, setK0] = useState(1);
   const [periods, setPeriods] = useState(30);
   const [activeChart, setActiveChart] = useState<"dynamics" | "levels" | "phase">("dynamics");
+  const [steadyOpen, setSteadyOpen] = useState(true);
+  const [dataOpen, setDataOpen] = useState(true);
 
   const applyCountry = useCallback((code: string, dataset: PwtDataset) => {
     const country = dataset.countries[code];
@@ -94,13 +99,13 @@ const Index = () => {
       ? (Y0 / (Math.pow(K0, alphaValue) * Math.pow(LprodValue, 1 - alphaValue)))
       : A0;
 
-    if (row.labsh !== null) setAlpha(alphaValue);
+    if (row.labsh !== null && alphaAuto) setAlpha(alphaValue);
     if (K0 > 0) setKLevel0(K0);
     if (LprodValue > 0) setLprod0(LprodValue);
     if (LpopValue > 0) setLpop0(LpopValue);
     if (Number.isFinite(A0Value) && A0Value > 0) setA0(A0Value);
     setSelectedYear(row.y);
-  }, [A0, KLevel0, Lprod0, Lpop0, alpha]);
+  }, [A0, KLevel0, Lprod0, Lpop0, alpha, alphaAuto]);
 
   useEffect(() => {
     fetch("/data/pwt110.json")
@@ -117,6 +122,10 @@ const Index = () => {
         setPwtError(String(err));
       });
   }, []);
+
+  useEffect(() => {
+    setAlphaAuto(true);
+  }, [selectedCountry]);
 
   useEffect(() => {
     if (pwtData) applyCountry(selectedCountry, pwtData);
@@ -169,7 +178,15 @@ const Index = () => {
             <div className="rounded-xl border border-border bg-card p-5 space-y-5">
               <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">{t("parameters")}</h2>
               <ParameterSlider label={t("savingsRate")} symbol="s" value={s} min={0.01} max={0.8} step={0.01} onChange={setS} format={v => `${(v * 100).toFixed(0)}%`} />
-              <ParameterSlider label={t("capitalShare")} symbol="α" value={alpha} min={0.1} max={0.9} step={0.01} onChange={setAlpha} />
+              <ParameterSlider
+                label={t("capitalShare")}
+                symbol="α"
+                value={alpha}
+                min={0.1}
+                max={0.9}
+                step={0.01}
+                onChange={(v) => { setAlphaAuto(false); setAlpha(v); }}
+              />
               <ParameterSlider label={t("depreciation")} symbol="δ" value={delta} min={0.01} max={0.2} step={0.005} onChange={setDelta} format={v => `${(v * 100).toFixed(1)}%`} />
               <ParameterSlider label={t("popGrowth")} symbol="n" value={n} min={0} max={0.1} step={0.005} onChange={setN} format={v => `${(v * 100).toFixed(1)}%`} />
               <ParameterSlider label={t("techGrowth")} symbol="g" value={g} min={0} max={0.1} step={0.005} onChange={setG} format={v => `${(v * 100).toFixed(1)}%`} />
@@ -177,9 +194,19 @@ const Index = () => {
               <ParameterSlider label={t("simPeriods")} symbol="T" value={periods} min={20} max={150} step={10} onChange={setPeriods} format={v => `${v}`} />
             </div>
 
-            <div className="rounded-xl border border-border bg-card p-5">
-              <SteadyStatePanel kStar={ss.kStar} yStar={ss.yStar} cStar={ss.cStar} iStar={ss.iStar} goldenS={goldenS} currentS={s} />
-            </div>
+            <Collapsible open={steadyOpen} onOpenChange={setSteadyOpen}>
+              <div className="rounded-xl border border-border bg-card p-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">{t("steadyState")}</h3>
+                  <CollapsibleTrigger className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground transition-colors">
+                    <ChevronDown className={`h-4 w-4 transition-transform ${steadyOpen ? "rotate-180" : ""}`} />
+                  </CollapsibleTrigger>
+                </div>
+                <CollapsibleContent>
+                  <SteadyStatePanel kStar={ss.kStar} yStar={ss.yStar} cStar={ss.cStar} iStar={ss.iStar} goldenS={goldenS} currentS={s} />
+                </CollapsibleContent>
+              </div>
+            </Collapsible>
 
             <div className="rounded-xl border border-border bg-card p-5 space-y-4">
               <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">{t("levelInputsTitle")}</h3>
@@ -258,10 +285,10 @@ const Index = () => {
             <div className="rounded-xl border border-border bg-card p-5 space-y-2">
               <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">{t("formulas")}</h3>
               <div className="space-y-2 text-xs text-muted-foreground">
-                <BlockMath math={`\dot{k} = s f(k) - (n + g + \delta)k`} />
-                <BlockMath math={`f(k) = k^{\alpha}`} />
-                <BlockMath math={`k^* = \left(\frac{s}{n+g+\delta}\right)^{\frac{1}{1-\alpha}}`} />
-                <BlockMath math={`s_{gold} = \alpha`} />
+                <BlockMath math={String.raw`\dot{k} = s f(k) - (n + g + \delta)k`} />
+                <BlockMath math={String.raw`f(k) = k^{\alpha}`} />
+                <BlockMath math={String.raw`k^* = \left(\frac{s}{n+g+\delta}\right)^{\frac{1}{1-\alpha}}`} />
+                <BlockMath math={String.raw`s_{gold} = \alpha`} />
               </div>
             </div>
           </motion.aside>
@@ -277,33 +304,41 @@ const Index = () => {
               </Tabs>
               <SolowCharts data={data} kStar={ss.kStar} activeChart={activeChart} />
             </div>
-
-            <div className="mt-6 rounded-xl border border-border bg-card p-6">
-              <h3 className="mb-4 text-sm font-semibold text-foreground uppercase tracking-wider">{t("numericalData")}</h3>
-              <div className="max-h-64 overflow-auto rounded-lg border border-border">
-                <table className="w-full text-xs font-mono">
-                  <thead className="sticky top-0 bg-muted">
-                    <tr>
-                      {["t", "k", "y", "c", "i", "(n+g+δ)k"].map(h => (
-                        <th key={h} className="px-3 py-2 text-left font-semibold text-muted-foreground">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.filter((_, i) => i % Math.max(1, Math.floor(data.length / 30)) === 0 || i === data.length - 1).map(d => (
-                      <tr key={d.t} className="border-t border-border hover:bg-muted/50 transition-colors">
-                        <td className="px-3 py-1.5 text-foreground">{d.t}</td>
-                        <td className="px-3 py-1.5 text-primary">{d.k.toFixed(3)}</td>
-                        <td className="px-3 py-1.5 text-accent">{d.y.toFixed(3)}</td>
-                        <td className="px-3 py-1.5">{d.c.toFixed(3)}</td>
-                        <td className="px-3 py-1.5">{d.i.toFixed(3)}</td>
-                        <td className="px-3 py-1.5">{d.breakEven.toFixed(3)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            <Collapsible open={dataOpen} onOpenChange={setDataOpen}>
+              <div className="mt-6 rounded-xl border border-border bg-card p-6">
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">{t("numericalData")}</h3>
+                  <CollapsibleTrigger className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground transition-colors">
+                    <ChevronDown className={`h-4 w-4 transition-transform ${dataOpen ? "rotate-180" : ""}`} />
+                  </CollapsibleTrigger>
+                </div>
+                <CollapsibleContent>
+                  <div className="max-h-64 overflow-auto rounded-lg border border-border">
+                    <table className="w-full text-xs font-mono">
+                      <thead className="sticky top-0 bg-muted">
+                        <tr>
+                          {['t', 'k', 'y', 'c', 'i', '(n+g+?)k'].map(h => (
+                            <th key={h} className="px-3 py-2 text-left font-semibold text-muted-foreground">{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.filter((_, i) => i % Math.max(1, Math.floor(data.length / 30)) === 0 || i === data.length - 1).map(d => (
+                          <tr key={d.t} className="border-t border-border hover:bg-muted/50 transition-colors">
+                            <td className="px-3 py-1.5 text-foreground">{d.t}</td>
+                            <td className="px-3 py-1.5 text-primary">{d.k.toFixed(3)}</td>
+                            <td className="px-3 py-1.5 text-accent">{d.y.toFixed(3)}</td>
+                            <td className="px-3 py-1.5">{d.c.toFixed(3)}</td>
+                            <td className="px-3 py-1.5">{d.i.toFixed(3)}</td>
+                            <td className="px-3 py-1.5">{d.breakEven.toFixed(3)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CollapsibleContent>
               </div>
-            </div>
+            </Collapsible>
 
             <div className="mt-6 rounded-xl border border-border bg-card p-6">
               <h3 className="mb-4 text-sm font-semibold text-foreground uppercase tracking-wider">{t("realGdpTitle")}</h3>

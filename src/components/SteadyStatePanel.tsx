@@ -27,7 +27,6 @@ const SteadyStatePanel = ({ kStar, yStar, cStar, iStar, goldenS, currentS }: Ste
 
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">{t("steadyState")}</h3>
       <div className="grid grid-cols-2 gap-3">
         <StatCard label={t("capital")} symbol="k*" value={kStar} color="text-primary" />
         <StatCard label={t("output")} symbol="y*" value={yStar} color="text-accent" />
