@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import NavHeader from "@/components/NavHeader";
+import SiteFooter from "@/components/SiteFooter";
 import { t, getLocale, setLocale, type Locale, SUPPORTED_LOCALES } from "@/lib/i18n";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -174,6 +175,7 @@ const GuidePage = () => {
           </ul>
         </Section>
       </main>
+      <SiteFooter />
     </div>
   );
 };

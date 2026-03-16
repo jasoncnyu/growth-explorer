@@ -14,6 +14,7 @@ import ParameterSlider from "@/components/ParameterSlider";
 import SolowCharts from "@/components/SolowCharts";
 import SteadyStatePanel from "@/components/SteadyStatePanel";
 import NavHeader from "@/components/NavHeader";
+import SiteFooter from "@/components/SiteFooter";
 import { simulate, simulateLevels, computeSteadyState, goldenRuleSavingsRate, type SolowParams } from "@/lib/solow";
 import { t, getLocale, setLocale, isRTL, type Locale, SUPPORTED_LOCALES } from "@/lib/i18n";
 
@@ -397,6 +398,7 @@ const Index = () => {
           </motion.section>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 };
