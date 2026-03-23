@@ -1,8 +1,8 @@
 # Growth Explorer
 
-Growth Explorer는 **Solow 성장모형을 실제 국가 데이터(PWT 11.0)에 연결해 시뮬레이션**하는 학습·탐구용 도구입니다.
-국가를 선택하면 해당 국가의 최신 데이터로 **K, L, α, A₀**를 보정하고,
-시간에 따른 **총 GDP, 1인당 GDP, 노동자 1인당 GDP**의 변화를 시각화합니다.
+Growth Explorer is a learning and exploration tool that **simulates the Solow growth model using real country data (PWT 11.0)**.
+When you select a country, it calibrates **K, L, α, A₀** using the latest available data for that country,
+and visualizes how **total GDP, GDP per capita, and GDP per worker** change over time.
 
 ## Setup
 
@@ -67,3 +67,7 @@ If a data field is missing for the selected country-year:
 - The level simulation is in **PPP-adjusted 2021 US$** terms.
 - Total GDP grows exponentially when `n` (population growth) and `g` (technology growth) are positive.
 - The “GDP per worker” and “GDP per capita” lines differ because production uses workers while per-capita uses population.
+
+## Listed On
+
+[Listed on LeanVibe](https://leanvibe.io/vibe/growth-explorer)
